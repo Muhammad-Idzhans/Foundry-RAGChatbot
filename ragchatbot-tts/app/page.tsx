@@ -30,6 +30,26 @@ export default function ChatbotUI() {
   const [isListening, setIsListening] = useState(false);
   const recognizerRef = useRef<any>(null);
 
+  // Scroll to bottom functionality
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      // Show button if we scroll up more than 150px
+      if (scrollHeight - scrollTop - clientHeight > 150) {
+        setShowScrollButton(true);
+      } else {
+        setShowScrollButton(false);
+      }
+    }
+  };
+
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamedText]); // <-- Add streamedText here
@@ -39,10 +59,10 @@ export default function ChatbotUI() {
     if (!href.includes('.blob.core.windows.net')) return; // Only intercept blob links
 
     e.preventDefault();
-    
+
     // Show a loading toast that doesn't close automatically (duration: 0)
     const hideLoading = message.loading('Preparing secure document link...', 0);
-    
+
     try {
       const res = await fetch('/api/blob-sas', {
         method: 'POST',
@@ -50,9 +70,9 @@ export default function ChatbotUI() {
         body: JSON.stringify({ blobUrl: href }),
       });
       const data = await res.json();
-      
+
       hideLoading(); // Close the loading toast
-      
+
       if (data.signedUrl) {
         message.success('Document opened successfully!', 2);
         window.open(data.signedUrl, '_blank');
@@ -247,8 +267,12 @@ export default function ChatbotUI() {
         <div className='d-flex flex-column w-100 h-100' style={{ maxWidth: '1000px' }}>
 
           {/* Chat History Card */}
-          <div className='card flex-grow-1 border-0 bg-transparent d-flex flex-column overflow-hidden'>
-            <div className='card-body overflow-auto d-flex flex-column p-4 gap-4'>
+          <div className='card flex-grow-1 border-0 bg-transparent d-flex flex-column overflow-hidden position-relative'>
+            <div
+              className='card-body overflow-auto d-flex flex-column p-4 gap-4 scrollbar-hide'
+              ref={chatContainerRef}
+              onScroll={handleScroll}
+            >
 
               {/* Conditionally render the Welcome Screen OR the Chat History */}
               {messages.length === 0 ? (
@@ -317,12 +341,12 @@ export default function ChatbotUI() {
                             remarkPlugins={[remarkGfm]}
                             components={{
                               a: ({ node, href, ...props }) => <a
-                                  {...props}
-                                  href={href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => href && handleBlobLink(e, href)}
-                                />,
+                                {...props}
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => href && handleBlobLink(e, href)}
+                              />,
                               ul: ({ node, ...props }) => <ul className="ps-4 mb-1 list-disc" {...props} />,
                               ol: ({ node, ...props }) => <ol className="ps-4 mb-1 list-decimal" {...props} />,
                               li: ({ node, ...props }) => <li className="mb-0" {...props} />
@@ -357,6 +381,18 @@ export default function ChatbotUI() {
 
               <div ref={messageEndRef}></div>
             </div>
+
+            {/* Scroll to Bottom Button */}
+            {showScrollButton && (
+              <button
+                onClick={scrollToBottom}
+                className="position-absolute start-50 translate-middle-x btn btn-secondary rounded-circle shadow d-flex align-items-center justify-content-center animate-fade-in"
+                style={{ bottom: '20px', width: '40px', height: '40px', zIndex: 10 }}
+                title="Scroll to bottom"
+              >
+                <i className="bi bi-arrow-down text-white"></i>
+              </button>
+            )}
           </div>
 
           {/* Input Area */}
