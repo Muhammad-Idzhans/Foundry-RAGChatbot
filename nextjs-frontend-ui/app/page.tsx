@@ -177,12 +177,13 @@ export default function ChatbotUI() {
     }
     try {
       const res = await fetch("/api/speech-token");
-      const { token, region } = await res.json();
+      const { token, endpoint } = await res.json();
       const sdk = await import("microsoft-cognitiveservices-speech-sdk");
-      const authConfig = sdk.SpeechConfig.fromAuthorizationToken(token, region);
+      const speechConfig = sdk.SpeechConfig.fromEndpoint(new URL(endpoint));
+      speechConfig.authorizationToken = token;
       const autoDetectConfig = sdk.AutoDetectSourceLanguageConfig.fromLanguages(["en-US", "ms-MY", "zh-CN"]);
       const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
-      const recognizer = sdk.SpeechRecognizer.FromConfig(authConfig, autoDetectConfig, audioConfig);
+      const recognizer = sdk.SpeechRecognizer.FromConfig(speechConfig, autoDetectConfig, audioConfig);
       recognizerRef.current = recognizer;
       recognizer.recognized = (_s: any, e: any) => {
         if (e.result.text) {
