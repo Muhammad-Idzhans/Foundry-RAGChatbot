@@ -53,10 +53,10 @@ export default function ChatbotUI() {
 
   // Suggestion prompts for the welcome screen
   const suggestions = [
-    { icon: "bi-lightbulb", title: "Explain a concept", subtitle: "Break down complex topics simply" },
-    { icon: "bi-file-earmark-text", title: "Summarize a document", subtitle: "Get key insights in seconds" },
-    { icon: "bi-search", title: "Find information", subtitle: "Search the knowledge base" },
-    { icon: "bi-chat-square-text", title: "Have a conversation", subtitle: "Ask me anything to get started" },
+    { icon: "bi-people", title: "How many number of employees do we have right now?", subtitle: "Get the current total headcount" },
+    { icon: "bi-currency-dollar", title: "What is the Finance Revenue in total?", subtitle: "View total revenue figures" },
+    { icon: "bi-diagram-3", title: "How many number of people in each of the department?", subtitle: "Breakdown of staff by department" },
+    { icon: "bi-exclamation-triangle", title: "What is the Overdue Amount of our finances and break it down by customer.", subtitle: "Overdue amounts by customer" },
   ];
 
   // ---------------- HANDLERS ----------------
@@ -214,7 +214,7 @@ export default function ChatbotUI() {
               <i className="bi bi-stars text-white"></i>
             </div>
             <div>
-              <h5 className="m-0 p-0 fw-bold app-title" style={{ letterSpacing: '-0.01em' }}>RAG Demo Chatbot</h5>
+              <h5 className="m-0 p-0 fw-bold app-title" style={{ letterSpacing: '-0.01em' }}>Foundry RAG Chatbot Demo</h5>
               <span className="app-subtitle" style={{ fontSize: '0.8rem' }}>
                 Powered by <span className="brand-gradient-text fw-semibold">Microsoft Foundry</span>
               </span>
@@ -279,8 +279,8 @@ export default function ChatbotUI() {
                     {suggestions.map((s, idx) => (
                       <div key={idx} className="col-12 col-md-6">
                         <button
-                          className="suggestion-card w-100 text-start p-3 d-flex align-items-start gap-3"
-                          onClick={() => sendMessage(s.title + " — " + s.subtitle)}
+                          className="suggestion-card w-100 h-100 text-start p-3 d-flex align-items-start gap-3"
+                          onClick={() => sendMessage(s.title)}
                         >
                           <div className="suggestion-icon d-flex align-items-center justify-content-center flex-shrink-0">
                             <i className={`bi ${s.icon}`}></i>
