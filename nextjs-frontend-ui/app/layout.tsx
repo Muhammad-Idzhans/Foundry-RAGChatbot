@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "[POC] HartaBot 2.0",
-  description: "HartaBot 2.0 - Powered by Azure AI Foundry",
+  title: "[Demo] RAG Chatbot",
+  description: "RAG Chatbot Demo - Powered by Azure AI Foundry",
 };
 
 export default function RootLayout({

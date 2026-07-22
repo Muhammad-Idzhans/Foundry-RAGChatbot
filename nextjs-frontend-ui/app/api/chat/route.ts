@@ -13,14 +13,14 @@ export async function POST(req: Request) {
 
         // 2. Set up the AI Foundry Project connection
         // We try to pull these from your .env.local if they exist, otherwise we use your fallback strings
-        const projectEndpoint = process.env.FOUNDRY_PROJECT_ENDPOINT || "https://poc-chatbot-rag-foundry.services.ai.azure.com/api/projects/Chatbot-SpeechToText";
-        const agentName = process.env.AZURE_OPENAI_AGENT_ID || "chatbot-rag";
+        const projectEndpoint = process.env.FOUNDRY_PROJECT_ENDPOINT || "https://demo-cashflow-foundry.services.ai.azure.com/api/projects/demo-cashflow-foundryProject";
+        const agentName = process.env.AZURE_OPENAI_AGENT_ID || "cashflow-agent";
 
         // For ZAVA Agent
         // const agentVersion = "14";
 
         // For Hartalega Agent
-        const agentVersion = "15";
+        const agentVersion = "11";
 
         // Create the AI Project client
         const projectClient = new AIProjectClient(projectEndpoint, new DefaultAzureCredential());
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
         }
 
         // Ask your custom agent to generate a response based on the conversation
-        const response = await openAIClient.responses.create(
+        let response = await openAIClient.responses.create(
             {
                 conversation: currentConversationId,
             },
@@ -51,6 +51,13 @@ export async function POST(req: Request) {
                 body: { agent_reference: { name: agentName, version: agentVersion, type: "agent_reference" } },
             },
         );
+
+        // Poll until the agent finishes processing (status leaves "queued" / "in_progress")
+        while (response.status === "queued" || response.status === "in_progress") {
+            await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds between polls
+            response = await openAIClient.responses.retrieve(response.id);
+        }
+
         // 4. Return the Agent's answer AND the Thread ID back to your frontend
         return NextResponse.json({
             reply: response.output_text,
