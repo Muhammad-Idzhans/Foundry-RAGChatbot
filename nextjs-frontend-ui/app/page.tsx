@@ -68,7 +68,10 @@ export default function ChatbotUI() {
   };
 
   const scrollToBottom = () => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    chatContainerRef.current?.scrollTo({
+      top: chatContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   };
 
   useEffect(() => {
@@ -260,7 +263,7 @@ export default function ChatbotUI() {
               {messages.length === 0 ? (
 
                 /* ---------- WELCOME SCREEN ---------- */
-                <div className="h-100 w-100 d-flex flex-column align-items-center justify-content-center text-center animate-fade-in-up">
+                <div className="h-100 w-100 d-flex flex-column align-items-center justify-content-start text-center animate-fade-in-up" style={{ paddingTop: '8vh' }}>
 
                   {/* Animated Orb Logo */}
                   <div className="welcome-orb mb-4">
