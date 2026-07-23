@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "[Demo] Foundry RAG Chatbot",
-  description: "Foundry RAG Chatbot Demo - Powered by Azure AI Foundry",
+  title: "Foundry RAG Chatbot Demo",
+  description: "An AI-powered knowledge assistant that answers questions from your enterprise data. Powered by Microsoft Foundry.",
 };
 
 export default function RootLayout({
